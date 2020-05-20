@@ -42,13 +42,23 @@ module.exports.sockets = {
   *                                                                          *
   ***************************************************************************/
 
-  // beforeConnect: function(handshake, proceed) {
-  //
-  //   // `true` allows the socket to connect.
-  //   // (`false` would reject the connection)
-  //   return proceed(undefined, true);
-  //
-  // },
+  beforeConnect: async function(handshake, proceed) {
+    const token = handshake._query.apikey;
+    if (token === undefined) {
+      // TODO: Send error to the other end
+      return proceed('You need to provide an API Key on url query (apikey={YOURAPIKEY})', false);
+    }
+
+    const apiKey = await ApiKey.get(token);
+    if (apiKey === null) {
+      return proceed('ApiKey not found', false);
+    }
+
+    // `true` allows the socket to connect.
+    // (`false` would reject the connection)
+    return proceed(undefined, true);
+
+  },
 
 
   /***************************************************************************

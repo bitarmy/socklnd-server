@@ -28,24 +28,7 @@ module.exports.bootstrap = async function() {
   // ```
   //
 
-
   const node = await Node.findOne({ id: 1 });
-
-  // If no user was found, respond "notFound" (like calling `res.notFound()`)
-  if (!node) { throw 'notFound'; }
-
-  let res;
-  try {
-    res = await Node.connect(node);
-  } catch (e) {
-    res = {
-      sucess: false,
-      error: e
-    }
-  }
-  // console.log({
-  //   node: node,
-  //   connection: res
-  // });
+  Node.connect(node);
 
 };

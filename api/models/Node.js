@@ -37,7 +37,7 @@ module.exports = {
     status: {
       type: 'string',
       //required: true,
-      isIn: ['connected', 'disconnected'],
+      isIn: ['connected', 'connecting', 'disconnected'],
       defaultsTo: 'disconnected',
     },
 

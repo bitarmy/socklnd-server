@@ -29,17 +29,25 @@ module.exports.http = {
     *                                                                          *
     ***************************************************************************/
 
-    // order: [
-    //   'cookieParser',
-    //   'session',
-    //   'bodyParser',
+    order: [
+      // 'cookieParser',
+      // 'session',
+      // 'passportInit',            // <==== If you're using "passport", you'll want to have its two
+      // 'passportSession',         // <==== middleware functions run after "session".
     //   'compress',
     //   'poweredBy',
     //   'router',
     //   'www',
     //   'favicon',
-    // ],
+    ],
 
+    // passportInit    : (function (){
+    //   return require('passport').initialize();
+    // })(),
+    //
+    // passportSession : (function (){
+    //   return require('passport').session();
+    // })()
 
     /***************************************************************************
     *                                                                          *

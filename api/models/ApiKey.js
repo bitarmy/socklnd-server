@@ -50,4 +50,24 @@ module.exports = {
     });
   },
 
+  get: async function (token) {
+    let apiKey;
+    if (!token) {
+      throw 'Must provide a token';
+    }
+    const criteria = {
+      token:token
+    };
+
+    try {
+      apiKey = await ApiKey.findOne(criteria);
+    } catch (e) {
+      console.log.warn(e.details);
+      //console.dir(e);
+      return null;
+    }
+
+    return apiKey !== undefined ? apiKey : null;
+  }
+
 };

@@ -48,6 +48,9 @@ module.exports = function defineLndHook(sails) {
     },
 
     connectNode: async function (node) {
+      if (_.size(activeGrpcIndex) >= this.config.maxInstances) {
+        throw 'Can\'t create Grpc, Max instances of (' + this.config.maxInstances + ') reached. You can increase the value on sails.config.maxInstances';
+      }
       const grpc = this.hasConnection(node.id) ? activeGrpcIndex[node.id] : await this.createGrpc(node);
       await connectGrpc(grpc, node);
       activeGrpcIndex[node.id] = grpc;
@@ -69,7 +72,11 @@ module.exports = function defineLndHook(sails) {
 
 async function connectGrpc(grpc, node) {
   sails.log.info('Connecting to Lnd via Grpc...');
+  onConnecting.call(grpc, node.id);
   await grpc.connect();
+
+  console.dir(this.onConnect);
+  onConnect(node.id);
   await verifyLock(grpc, node);
   initGrpcSubscriptions(grpc, node.id);
 }
@@ -79,6 +86,7 @@ async function getGrpcInfo(grpc, nodeId) {
 }
 
 async function verifyLock(grpc, node) {
+  sails.log.info('Verifying lock');
   const { WalletUnlocker } = grpc.services;
   if (grpc.state === 'locked') {
     if (!node.password) {
@@ -105,7 +113,6 @@ async function initGrpcSubscriptions(grpc, nodeId) {
   let call = grpc.services.Lightning.subscribeInvoices(request);
   call.on('data', onInvoice.bind(grpc, nodeId));
   call.on('status', onStatus.bind(grpc, nodeId));
-  //call.on('error', onError.bind(grpc, nodeId));
 }
 
 
@@ -124,8 +131,15 @@ function onNewInvoice(nodeId, invoice) {
 
 /** @this grpc */
 function onSettledInvoice(nodeId, invoice) {
+  const paymentRequest = invoice.r_hash.toString('hex');
+
   sails.log.info('Settled Invoice for node', nodeId);
-  sails.log.info('PayReq', invoice.payment_request);
+  sails.log.info('PayReq', paymentRequest);
+
+  sails.sockets.broadcast([
+    'invoice:' + paymentRequest,
+    'node:' + nodeId,
+  ], 'payment', invoice);
 }
 
 /** @this grpc */
@@ -143,7 +157,7 @@ function onStatus(nodeId, status) {
   // The current status of the stream.
   sails.log.info('Status on node ' + nodeId);
   sails.log.debug(status);
-  status.code === 0 && onDisconnected.call(this, nodeId, status.details);
+  status.code === 0 && onDisconnect.call(this, nodeId, status.details);
 }
 
 /** @this grpc */
@@ -158,13 +172,23 @@ function onConnectionError(nodeId, err) {
   sails.log.error(err);
 }
 
+
 /** @this grpc */
-function onConnected(nodeId, err) {
+function onConnecting(nodeId) {
+  sails.log.info('Connecting to node ' + nodeId);
+  Node.update({id:nodeId}, {status:'connecting'}).then();
+}
+
+
+/** @this grpc */
+function onConnect(nodeId) {
   sails.log.info('Connected to node ' + nodeId);
+  Node.update({id:nodeId}, {status:'connected'}).then();
 }
 
 /** @this grpc */
-function onDisconnected(nodeId, err) {
+function onDisconnect(nodeId) {
   sails.log.info('Disconnected from node ' + nodeId);
+  Node.update({id:nodeId}, {status:'disconnected'}).then();
   sails.hooks.lnd.removeNode(nodeId);
 }
