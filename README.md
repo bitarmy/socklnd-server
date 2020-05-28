@@ -1,5 +1,4 @@
-# socklnd-server
-
+# [<img title="socklnd-server - SockLND Server for NodeJs" src="https://i.imgur.com/LhQkezJ.png" width="300px" alt="icon of socklnd"/>](https://github.com/bitarmy/socklnd-server) server
 SockLND - Websocket server for LND
 
 ### Links
