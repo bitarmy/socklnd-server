@@ -54,8 +54,8 @@ module.exports.sockets = {
       return proceed('ApiKey not found', false);
     }
 
-    // `true` allows the socket to connect.
-    // (`false` would reject the connection)
+    handshake.headers.authorization = 'Bearer ' + token;
+    //console.dir(handshake.headers);
     return proceed(undefined, true);
 
   },

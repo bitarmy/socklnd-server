@@ -28,10 +28,10 @@ module.exports = function(grunt) {
           'Location',
           'RttcRefPlaceholder',
         ],
-        keep_fnames: true//eslint-disable-line
+        keep_fnames: true
       },
       compress: {
-        keep_fnames: true//eslint-disable-line
+        keep_fnames: true
       }
     }
   });
@@ -61,4 +61,3 @@ module.exports = function(grunt) {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 };
-

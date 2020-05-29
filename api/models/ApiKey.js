@@ -7,6 +7,12 @@
 
 import crypto from 'crypto';
 
+
+const MAX_SECONDS_EMPIRY = {
+  user: 60 * 60 * 24 * 365, // year
+  invited: 60 * 5,    // 5 minutes
+};
+
 module.exports = {
 
   attributes: {
@@ -31,23 +37,20 @@ module.exports = {
       type: 'string',
     },
 
-    //  ╔═╗╔╦╗╔╗ ╔═╗╔╦╗╔═╗
-    //  ║╣ ║║║╠╩╗║╣  ║║╚═╗
-    //  ╚═╝╩ ╩╚═╝╚═╝═╩╝╚═╝
-
-
-    //  ╔═╗╔═╗╔═╗╔═╗╔═╗╦╔═╗╔╦╗╦╔═╗╔╗╔╔═╗
-    //  ╠═╣╚═╗╚═╗║ ║║  ║╠═╣ ║ ║║ ║║║║╚═╗
-    //  ╩ ╩╚═╝╚═╝╚═╝╚═╝╩╩ ╩ ╩ ╩╚═╝╝╚╝╚═╝
+    expires: { // Converted to timestamp beforeCreate
+      type: 'number', // Seconds
+      defaultsTo: 3600,
+      isInteger: true
+    }
 
   },
 
-  beforeCreate: function(apiKey, cb) {
-    crypto.randomBytes(16, function(err, buffer) {
-      if (err) return cb(err);
-      apiKey.token = apiKey.category + '_' + buffer.toString('hex');
-      cb();
-    });
+  beforeCreate: async function(apiKey, cb) {
+    const seconds = Math.max(Math.min(apiKey.expires, MAX_SECONDS_EMPIRY[apiKey.category]), 60);
+    apiKey.token = apiKey.category + '_' + await generateTokenHash();
+    apiKey.expiry = getTimeFromExpire(seconds);
+    cb();
+
   },
 
   get: async function (token) {
@@ -62,8 +65,7 @@ module.exports = {
     try {
       apiKey = await ApiKey.findOne(criteria);
     } catch (e) {
-      console.log.warn(e.details);
-      //console.dir(e);
+      sails.log.warn(e.details);
       return null;
     }
 
@@ -71,3 +73,17 @@ module.exports = {
   }
 
 };
+
+function getTimeFromExpire(seconds) {
+  return Math.floor((new Date()).valueOf()/1000) + seconds;
+}
+
+
+function generateTokenHash(size) {
+  return new Promise((resolve, reject) => {
+    crypto.randomBytes(size ? size: 16, function(err, buffer) {
+      if (err) return reject(err);
+      resolve(buffer.toString('hex'));
+    });
+  });
+}

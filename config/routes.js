@@ -24,6 +24,7 @@ module.exports.routes = {
 
   'POST /api/v1/nodes/:nodeId/connect': { action: 'nodes/connect' },
   'POST /api/v1/subscribe/payment': { action: 'subscribe/payment' },
+  'GET /api/v1/apikeys/create': { action: 'apikeys/create' },
 
   /***************************************************************************
   *                                                                          *

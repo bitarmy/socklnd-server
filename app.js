@@ -35,6 +35,7 @@ try {
   sails = require('sails');
   rc = require('sails/accessible/rc');
 } catch (err) {
+  /* eslint-disable */
   console.error('Encountered an error when attempting to require(\'sails\'):');
   console.error(err.stack);
   console.error('--');
@@ -46,7 +47,7 @@ try {
   console.error('also run this app with `sails lift`.  Running with `sails lift` will');
   console.error('not run this file (`app.js`), but it will do exactly the same thing.');
   console.error('(It even uses your app directory\'s local Sails install, if possible.)');
-  return;
+  /* eslint-enable */
 }//-•
 
 

@@ -1,7 +1,7 @@
 module.exports = async function (req, res) {
   // TODO: Payment request validation
   const paymentHash = req.body.paymentHash,
-        room = 'invoice:' + paymentHash;
+    room = 'invoice:' + paymentHash;
 
   if (req.isSocket) {
     setTimeout(() => {

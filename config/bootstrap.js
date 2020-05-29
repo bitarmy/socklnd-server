@@ -28,7 +28,7 @@ module.exports.bootstrap = async function() {
   // ```
   //
 
-  const node = await Node.findOne({ id: 1 });
-  Node.connect(node);
+  //const node = await Node.findOne({ id: 1 });
+  //Node.connect(node);
 
 };

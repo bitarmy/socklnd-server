@@ -1,0 +1,16 @@
+// test/integration/controllers/ApiKeyController.test.js
+var supertest = require('supertest');
+
+describe('ApiKeyController.create', function() {
+
+  describe('#create()', function() {
+    // it('should redirect to /my/page', function (done) {
+    //   supertest(sails.hooks.http.app)
+    //   .post('/users/login')
+    //   .send({ name: 'test', password: 'test' })
+    //   .expect(302)
+    //   .expect('location','/my/page', done);
+    // });
+  });
+
+});

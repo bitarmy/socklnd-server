@@ -34,7 +34,7 @@ module.exports = function defineLndHook(sails) {
     },
 
     hasConnection: function (nodeId) {
-      return "nodeId" in activeGrpcIndex;
+      return nodeId in activeGrpcIndex;
     },
 
     createGrpc: function (node) {
@@ -75,7 +75,6 @@ async function connectGrpc(grpc, node) {
   onConnecting.call(grpc, node.id);
   await grpc.connect();
 
-  console.dir(this.onConnect);
   onConnect(node.id);
   await verifyLock(grpc, node);
   initGrpcSubscriptions(grpc, node.id);
@@ -149,7 +148,7 @@ function onInvoice(nodeId, invoice) {
     'settled': onSettledInvoice,
   };
   const state = invoice.state.toLowerCase();
-  functionList.hasOwnProperty(state) && functionList[state].call(this, nodeId, invoice);
+  ({}).propertyIsEnumerable.call(functionList, state) && functionList[state].call(this, nodeId, invoice);
 }
 
 /** @this grpc */

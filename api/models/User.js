@@ -44,7 +44,7 @@ module.exports = {
     },
   },
   customToJSON: function() {
-     return _.omit(this, ['password']);
+    return _.omit(this, ['password']);
   },
 
   beforeCreate: (user, cb) => {
