@@ -1,0 +1,40 @@
+{
+    "env": {
+        "node": true,
+        "browser": false,
+        "es6": true,
+        "mocha": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 2017,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": false
+        }
+    },
+
+    "globals": {
+        "_": true,
+        "sails": true,
+        "async": true,
+        "server": true,
+
+        "User": true,
+        "ApiKey": true,
+        "Node": true
+
+
+    },
+    "extends":[
+        "eslint:recommended",
+        "plugin:mocha/recommended"
+    ],
+    "rules":{
+        "no-unused-vars": "warn",
+        "no-console": "warn",
+        "no-irregular-whitespace": "warn"
+    },
+    "plugins": [
+      "mocha"
+    ]
+}
